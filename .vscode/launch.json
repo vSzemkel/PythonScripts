@@ -9,6 +9,7 @@
             "type": "python",
             "request": "launch",
             "program": "${file}",
+            //"args": ["-lA2h5A2h6"],
             "console": "externalTerminal"
         }
     ]

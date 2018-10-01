@@ -13,11 +13,11 @@ g_filename = r"C:\Windows\System32\kernel32.dll"
 g_cpu_mode = distorm3.Decode64Bits
 g_rops = {}
 
-def DecodeAsm(pc, d):
+def DecodeAsm(ea, codeChunk):
     global g_cpu_mode
 
     # binascii.hexlify(d)
-    disasm = distorm3.Decode(pc, d, g_cpu_mode)
+    disasm = distorm3.Decode(ea, codeChunk, g_cpu_mode)
 
     k = []
     l = ""
@@ -36,15 +36,24 @@ def DecodeAsm(pc, d):
 
     return (l, k, ist)
 
+last_found_len = 0
 d = open(g_filename, "rb").read()
 d = d[g_rawtext_begin:g_rawtext_end] # extract .text section
 
 for i in xrange(1, (g_rawtext_end - g_rawtext_begin)):
+    if last_found_len > 0:
+        last_found_len -= 1
+        continue
+
     (cc,kk,ist) = DecodeAsm(g_memory_base + i, d[i:i + g_chunk_size])
+
     if cc.find("ret") == -1:
         continue
 
     if cc.find("db") != -1:
+        continue
+
+    if len(kk) <= 1:
         continue
 
     if ist in g_rops:
@@ -58,4 +67,5 @@ for i in xrange(1, (g_rawtext_end - g_rawtext_begin)):
         if k[1].find("ret") != -1:
             break
 
+    last_found_len = kk[-1:][0][0] - kk[0][0] + 1
     print ""
