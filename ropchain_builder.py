@@ -1,3 +1,4 @@
+#!/usr/bin/python
 
 # based on Gynvael's teachings:
 # https://www.youtube.com/watch?v=iwRSFlZoSCM

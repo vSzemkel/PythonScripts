@@ -1,3 +1,4 @@
+#!/usr/bin/python
 
 # based on Gynvael's teachings:
 # https://www.youtube.com/watch?v=iwRSFlZoSCM
@@ -50,7 +51,7 @@ for i in xrange(1, (g_rawtext_end - g_rawtext_begin)):
     if cc.find("ret") == -1:
         continue
 
-    if cc.find("db") != -1:
+    if cc.find("db") != -1 or cc.find("iret") != -1 or cc.find("retf") != -1:
         continue
 
     if len(kk) <= 1:
@@ -69,3 +70,5 @@ for i in xrange(1, (g_rawtext_end - g_rawtext_begin)):
 
     last_found_len = kk[-1:][0][0] - kk[0][0] + 1
     print ""
+
+# python rop_hunter.py > kernel32.rop

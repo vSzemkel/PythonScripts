@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from argparse import ArgumentParser
 
 def GenerateStackMarker(n = 300):

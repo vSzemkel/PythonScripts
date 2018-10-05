@@ -1,0 +1,6 @@
+# https://github.com/vSzemkel/PythonScripts.git
+
+*.bin
+*.dll
+*.rop
+*.h
