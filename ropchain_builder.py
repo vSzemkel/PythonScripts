@@ -78,3 +78,4 @@ f.close()
 
 # grep -A 1 'pop r..' kernel32.rop | grep -B 1 'ret'
 # grep -A 1 'mov \[r..\], r..' kernel32.rop | grep -B 1 'ret'
+# grep -R -a -b -o /bin/sh /lib/libc.so.6
