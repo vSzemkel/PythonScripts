@@ -46,7 +46,7 @@ for i in xrange(1, (g_rawtext_end - g_rawtext_begin)):
         last_found_len -= 1
         continue
 
-    (cc,kk,ist) = DecodeAsm(g_memory_base + i, d[i:i + g_chunk_size])
+    (cc,gadget_map,gadget_text) = DecodeAsm(g_memory_base + i, d[i:i + g_chunk_size])
 
     if cc.find("ret") == -1:
         continue
@@ -54,21 +54,21 @@ for i in xrange(1, (g_rawtext_end - g_rawtext_begin)):
     if cc.find("db") != -1 or cc.find("iret") != -1 or cc.find("retf") != -1:
         continue
 
-    if len(kk) <= 1:
+    if len(gadget_map) <= 1:
         continue
 
-    if ist in g_rops:
+    if gadget_text in g_rops:
         continue
 
-    g_rops[ist] = True
+    g_rops[gadget_text] = True
 
     print "------> offset: 0x%x" % (i + g_memory_base)
-    for k in kk:
+    for k in gadget_map:
         print "0x%x %s" % (k[0], k[1])
         if k[1].find("ret") != -1:
             break
 
-    last_found_len = kk[-1:][0][0] - kk[0][0] + 1
+    last_found_len = gadget_map[-1:][0][0] - gadget_map[0][0] + 1
     print ""
 
 # python rop_hunter.py > kernel32.rop
