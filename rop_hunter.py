@@ -20,38 +20,33 @@ def DecodeAsm(ea, codeChunk):
     # binascii.hexlify(d)
     disasm = distorm3.Decode(ea, codeChunk, g_cpu_mode)
 
-    k = []
-    l = ""
-    ist = ""
+    gmap = []
+    gtxt = ""
 
-    for d in disasm:
-        addr = d[0]
-        # size = d[1]
-        inst = d[2].lower()
-        t = "0x%x   %s" % (addr,inst)
-        l += t + '\n'
-        ist += "%s\n" % (inst)
-        k.append((addr,inst))
+    for (addr, _, inst, _) in disasm:
+        inst = inst.lower()
+        gtxt += "%s\n" % (inst)
+        gmap.append((addr,inst))
         if inst.find("ret") != -1:
             break
 
-    return (l, k, ist)
+    return (gmap, gtxt)
 
 last_found_len = 0
 d = open(g_filename, "rb").read()
 d = d[g_rawtext_begin:g_rawtext_end] # extract .text section
 
-for i in xrange(1, (g_rawtext_end - g_rawtext_begin)):
+for i in xrange(g_rawtext_end - g_rawtext_begin):
     if last_found_len > 0:
         last_found_len -= 1
         continue
 
-    (cc,gadget_map,gadget_text) = DecodeAsm(g_memory_base + i, d[i:i + g_chunk_size])
+    (gadget_map, gadget_text) = DecodeAsm(g_memory_base + i, d[i:i + g_chunk_size])
 
-    if cc.find("ret") == -1:
+    if gadget_text.find("ret") == -1:
         continue
 
-    if cc.find("db") != -1 or cc.find("iret") != -1 or cc.find("retf") != -1:
+    if gadget_text.find("db") != -1 or gadget_text.find("iret") != -1 or gadget_text.find("retf") != -1:
         continue
 
     if len(gadget_map) <= 1:
