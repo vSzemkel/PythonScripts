@@ -35,7 +35,7 @@ def resolve(lst):
     srtarr = sorted(list(set(gcdarr)))
 
     map = {}
-    for pos, c in list(enumerate(srtarr)):
+    for pos, c in enumerate(srtarr):
         map[c] = pos
     #print(map)
 
@@ -44,7 +44,7 @@ def resolve(lst):
 
 if __name__ == "__main__":
     job = read_input()
-    for i, j in list(enumerate(job)):
+    for i, j in enumerate(job):
         #print("N={}, {}".format(j[0], j[1]))
         case_result = resolve(j[1])
         print("Case #{}: {}".format(i + 1, case_result))
