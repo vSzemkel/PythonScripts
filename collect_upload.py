@@ -1,7 +1,7 @@
 # python -m pip install azure.storage.blob
 # set PATH=d:\Program Files\Python38;%PATH%
 
-from sys import argv
+from sys import argv, exit
 from time import time
 from os import path, remove
 from shutil import make_archive, rmtree
@@ -17,7 +17,7 @@ and upload it to Azure. Clean afterwards
 days_lag = 3
 date_format = "%Y-%m-%d"
 dir_to_collect = r"\\nas-work.agora.pl\work\arch\Warszawa"
-blob_connstr = "*****"
+blob_connstr = "***** ***"
 blob_container = "collectwa"
 
 # create archive
@@ -27,7 +27,13 @@ else:
     zip_filename = (datetime.now() + timedelta(days=-days_lag)).strftime(date_format)
 
 dir_to_collect = path.join(dir_to_collect, zip_filename)
-make_archive(zip_filename, 'zip', dir_to_collect)
+try:
+    make_archive(zip_filename, 'zip', dir_to_collect)
+except FileNotFoundError:
+    exit("Archive {} doesn't exist".format(zip_filename))
+except Exception as exc:
+    exit("Error comressing archive {}: {}".format(zip_filename, exc))
+
 zip_filename += ".zip"
 print("Archive {} of size {} compressed".format(zip_filename, path.getsize(zip_filename)))
 
@@ -44,5 +50,5 @@ except Exception as arg:
 
 # clean
 remove(zip_filename)
-#rmtree(dir_to_collect)
+rmtree(dir_to_collect)
 
