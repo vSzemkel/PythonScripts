@@ -1,17 +1,20 @@
 # python -m pip install azure.storage.blob
 # set PATH=d:\Program Files\Python38;%PATH%
 
-from sys import argv, exit
-from time import time
+"""
+Archive daily materials.
+
+Compress daily materials from graphics studio
+and upload it to Azure. Clean workspace afterwards.
+"""
+
+from datetime import datetime, timedelta
 from os import path, remove
 from shutil import make_archive, rmtree
-from datetime import datetime, timedelta
-from azure.storage.blob import BlobClient
+from sys import argv, exit
+from time import time
 
-'''
-Compress daily materials from graphics studio
-and upload it to Azure. Clean afterwards
-'''
+from azure.storage.blob import BlobClient
 
 # parameters
 days_lag = 3
@@ -26,29 +29,30 @@ if len(argv) == 2:
 else:
     zip_filename = (datetime.now() + timedelta(days=-days_lag)).strftime(date_format)
 
+start = time()
 dir_to_collect = path.join(dir_to_collect, zip_filename)
 try:
-    make_archive(zip_filename, 'zip', dir_to_collect)
+    make_archive(zip_filename, "zip", dir_to_collect)
 except FileNotFoundError:
-    exit("Archive {} doesn't exist".format(zip_filename))
+    exit("Archive {0} doesn't exist".format(zip_filename))
 except Exception as exc:
-    exit("Error comressing archive {}: {}".format(zip_filename, exc))
+    exit("Error comressing archive {0}: {1}".format(zip_filename, exc))
 
 zip_filename += ".zip"
-print("Archive {} of size {} compressed".format(zip_filename, path.getsize(zip_filename)))
+print("Archive {0} of size {1} compressed in {2:.2f} sec.".format(zip_filename, path.getsize(zip_filename), time() - start))
 
 # upload to azure blob
+start = time()
+blobname = zip_filename.replace("-", "/", 1)
 try:
-    name = zip_filename.replace('-', '/', 1)
-    blob = BlobClient.from_connection_string(conn_str=blob_connstr, container_name=blob_container, blob_name=name)
-    start = time()
-    with open(zip_filename, "rb") as data:
-        blob.upload_blob(data)
-    print("Blob uploaded in {:.2f} seconds".format(time() - start))
+    blob = BlobClient.from_connection_string(conn_str=blob_connstr, container_name=blob_container, blob_name=blobname)
+    with open(zip_filename, "rb") as dayarch:
+        blob.upload_blob(dayarch)
 except Exception as arg:
-    print("Error uploading blob: ", arg)
+    exit("Error uploading blob: ", arg)
+
+print("Blob uploaded in {0:.2f} sec.".format(time() - start))
 
 # clean
 remove(zip_filename)
-rmtree(dir_to_collect)
-
+# rmtree(dir_to_collect)
