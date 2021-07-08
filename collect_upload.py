@@ -14,7 +14,7 @@ from shutil import make_archive, rmtree
 from sys import argv, exit
 from time import time
 
-from azure.storage.blob import BlobClient
+from azure.storage.blob import BlobClient, StandardBlobTier
 
 # parameters
 days_lag = 3
@@ -47,7 +47,7 @@ blobname = zip_filename.replace("-", "/", 1)
 try:
     blob = BlobClient.from_connection_string(conn_str=blob_connstr, container_name=blob_container, blob_name=blobname)
     with open(zip_filename, "rb") as dayarch:
-        blob.upload_blob(dayarch)
+        blob.upload_blob(dayarch, standard_blob_tier=StandardBlobTier.Cool)
 except Exception as arg:
     exit("Error uploading blob: ", arg)
 
