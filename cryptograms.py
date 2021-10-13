@@ -1,4 +1,3 @@
-#!/usr/local/Cellar/python@3.8/3.8.1/bin/python3
 # chmod 700 cryptograms.py
 # cat cryptograms.dat | ./cryptograms.py
 # Case #1: CJQUIZKNOWBEVYOFDPFLUXALGORITHMS
